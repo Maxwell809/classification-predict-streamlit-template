@@ -461,8 +461,7 @@ ax5.set_title('All Tweets',fontsize=30)
 def main():
     
 	""" Tweet Classifier App Streamlit """
-    
-    
+
 	# Creates a main title and subheader on your page -
 	# these are static across all pages
 	st.title("Tweet Classifer")
@@ -470,13 +469,9 @@ def main():
 
 	# Creating sidebar with selection box -
 	# you can create multiple pages this way
-	options = ["Introduction", "Problem Statement", "Information", "EDA", "Model Description", "Prediction"]
+	options = ["Problem Statement", "Information", "EDA", "Model Description", "Prediction"]
 	selection = st.sidebar.selectbox("Choose Option", options)
 	# Building out the "Introduction" page
-	if selection == "Introduction":
-		st.info("Introduction")
-		st.markdown("Given the recent explosion of Big Data, there is a growing demand for analyzing non traditional data sources. Social Media data is a huge source of this data in the form of chats, messages, news feeds and all of it is in an unstructured form. Text analytics is a process that helps analyze this unstructured data and look for patterns or infer popular sentiment which can help organizations in their decision making.Twitter data is a powerful source of information on a wide list of topics. This data can be analyzed to find trends related to specific topics, measure popular sentiment, obtain feedback on past decisions and also help make future decisions. Climate change has received extensive attention from public opinion in the last couple of years, after being considered for decades as an exclusive scientific debate")
-		st.markdown("""![ChessUrl](https://i.gifer.com/HnFI.gif "Introduction")""")
 
 	# Building out the "Problem Statement" page
 	if selection == "Problem Statement":
@@ -511,19 +506,6 @@ def main():
 		st.markdown("Stochastic Gradient Descent (SGD) is a simple yet efficient optimization algorithm used to find the values of parameters/coefficients of functions that minimize a cost function. In other words, it is used for discriminative learning of linear classifiers under convex loss functions such as SVM and Logistic regression. It has been successfully applied to large-scale datasets because the update to the coefficients is performed for each training instance, rather than at the end of instances. Stochastic Gradient Descent (SGD) classifier basically implements a plain SGD learning routine supporting various loss functions and penalties for classification. Logistic regression has been rated as the best performing model for linearly separable data especially if it's predicting binary data(Yes & NO or 1 & 0), and performs better when there's no class imbalance.")
 		st.subheader("Support Vector Machine")
 		st.markdown("In the SVM algorithm, we plot each data item as a point in n-dimensional space (where n is number of features you have) with the value of each feature being the value of a particular coordinate. The goal of the SVM algorithm is to create the best line or decision boundary that can seperate n-dimensional space into classes so that we can easily put the new data point in the correct category in the future. This best decision boundary is called a hyperplane.SVM chooses the extreme points/vectors that help in creating the hyperplane. These extreme cases are called as support vectors. Consider the below diagram in which there are two different categories that are classified using a decision boundary or hyperplane. SVM maps training examples to points in space so as to maximise the width of the gap between the two categories. New examples are then mapped into that same space and predicted to belong to a category based on which side of the gap they fall. In addition to performing linear classification, SVMs can efficiently perform a non-linear classification using what is called the kernel trick, implicitly mapping their inputs into high-dimensional feature spaces. ![support-vector-machine-algorithm.png](https://static.javatpoint.com/tutorial/machine-learning/images/support-vector-machine-algorithm.png)")
-	# Building out the "Information" page
-	if selection == "Information":
-		st.info("General Information")
-		# You can read a markdown file from supporting resources folder
-		st.markdown("View the raw data and the processed data")
-
-		st.subheader("Raw Twitter data and label")
-		if st.checkbox('Show raw data'): # data is hidden if box is unchecked
-			st.write(raw[['sentiment', 'message']]) # will write the df to the page
-
-		st.subheader("Cleaned Twitter data and label")
-		if st.checkbox('Show cleaned data'): # data is hidden if box is unchecked
-			st.write(raw[['sentiment', 'clean_message']]) # will write the df to the page            
 
 	# Building out the predication page
 	if selection == "Prediction":
@@ -605,6 +587,20 @@ def main():
 					st.success("Text Categorized as:  Pro Climate Change, Believe In Climate Change")
 				if prediction == 2:
 					st.success("Text Categorized as:  Factual News On Climate Change")
+        
+# Building out the "Information" page
+	if selection == "Information":
+		st.info("General Information")
+		# You can read a markdown file from supporting resources folder
+		st.markdown("Given the recent explosion of Big Data, there is a growing demand for analyzing non traditional data sources. Social Media data is a huge source of this data in the form of chats, messages, news feeds and all of it is in an unstructured form. Text analytics is a process that helps analyze this unstructured data and look for patterns or infer popular sentiment which can help organizations in their decision making.Twitter data is a powerful source of information on a wide list of topics. This data can be analyzed to find trends related to specific topics, measure popular sentiment, obtain feedback on past decisions and also help make future decisions. Climate change has received extensive attention from public opinion in the last couple of years, after being considered for decades as an exclusive scientific debate")
+		st.subheader("Raw Twitter data and label")
+		if st.checkbox('Show raw data'): # data is hidden if box is unchecked
+			st.write(raw[['sentiment', 'message']]) # will write the df to the page
+
+		st.subheader("Cleaned Twitter data and label")
+		if st.checkbox('Show cleaned data'): # data is hidden if box is unchecked
+			st.write(raw[['sentiment', 'clean_message']]) # will write the df to the page            
+		st.markdown("""![ChessUrl](https://i.gifer.com/HnFI.gif "Introduction")""")
 
 # Required to let Streamlit instantiate our web app.  
 if __name__ == '__main__':
