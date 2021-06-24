@@ -33,6 +33,7 @@ import re # for regular expressions
 import string
 special = string.punctuation 
 import nltk # for text manipulation
+nltk.download('wordnet')
 
 import warnings 
 warnings.filterwarnings("ignore")
