@@ -34,36 +34,300 @@ import string
 special = string.punctuation 
 import nltk # for text manipulation
 from nltk.stem.porter import *
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.linear_model import LogisticRegression
+from scipy import stats 
+from sklearn import metrics 
+from sklearn.metrics import mean_squared_error,mean_absolute_error, make_scorer,classification_report,confusion_matrix,accuracy_score,roc_auc_score,roc_curve
 
 import warnings 
 warnings.filterwarnings("ignore")
 
 #Importing other libraries
+import nltk # for text manipulation
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from collections import defaultdict
 from collections import  Counter
-from nltk.corpus import stopwords
-additional  = ['retweet']
-stop = set().union(stopwords.words('english'),additional)
 
 # Style
+import matplotlib.style as style 
 from wordcloud import WordCloud
+from sklearn import datasets
 import matplotlib.pyplot as plt
-from nltk.tokenize import word_tokenize 
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer 
+from nltk.corpus import stopwords, wordnet 
+from gensim.parsing.preprocessing import remove_stopwords
 
 # Standard libraries
+import re
+import string
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt 
-
 
 # Vectorizer
 news_vectorizer = open("resources/tfidfvect.pkl","rb")
 count_vect = open("resources/CountVectorizer.pkl","rb")
 tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl file
 Count_v = joblib.load(count_vect)
+lemmatizer= WordNetLemmatizer()
 # Load your raw data
 raw = pd.read_csv("resources/train.csv")
+
+
+# Apostrophe Dictionary
+apostrophe_dict = {
+"ain't": "am not",
+"aren't": "are not",
+"can't": "cannot",
+"can't've": "cannot have",
+"'cause": "because",
+"could've": "could have",
+"couldn't": "could not",
+"couldn't've": "could not have",
+"didn't": "did not",
+"doesn't": "does not",
+"don't": "do not",
+"hadn't": "had not",
+"hadn't've": "had not have",
+"hasn't": "has not",
+"haven't": "have not",
+"he'd": "he would",
+"he'd've": "he would have",
+"he'll": "he will",
+"he'll've": "he will have",
+"he's": "he is",
+"how'd": "how did",
+"how'd'y": "how do you",
+"how'll": "how will",
+"how's": "how is",
+"i'd": "I would",
+"i'd've": "I would have",
+"i'll": "I will",
+"i'll've": "I will have",
+"i'm": "I am",
+"i've": "I have",
+"isn't": "is not",
+"it'd": "it would",
+"it'd've": "it would have",
+"it'll": "it will",
+"it'll've": "it will have",
+"it's": "it is",
+"It's": "it is",
+"let's": "let us",
+"ma'am": "madam",
+"mayn't": "may not",
+"might've": "might have",
+"mightn't": "might not",
+"mightn't've": "might not have",
+"must've": "must have",
+"mustn't": "must not",
+"mustn't've": "must not have",
+"needn't": "need not",
+"needn't've": "need not have",
+"o'clock": "of the clock",
+"oughtn't": "ought not",
+"oughtn't've": "ought not have",
+"shan't": "shall not",
+"sha'n't": "shall not",
+"shan't've": "shall not have",
+"she'd": "she would",
+"she'd've": "she would have",
+"she'll": "she will",
+"she'll've": "she will have",
+"she's": "she is",
+"should've": "should have",
+"shouldn't": "should not",
+"shouldn't've": "should not have",
+"so've": "so have",
+"so's": "so is",
+"that'd": "that had",
+"that'd've": "that would have",
+"that's": "that is",
+"there'd": "there would",
+"there'd've": "there would have",
+"there's": "there is",
+"they'd": "they would",
+"they'd've": "they would have",
+"they'll": "they will",
+"they'll've": "they will have",
+"they're": "they are",
+"they've": "they have",
+"to've": "to have",
+"wasn't": "was not",
+"we'd": "we would",
+"we'd've": "we would have",
+"we'll": "we will",
+"we'll've": "we will have",
+"we're": "we are",
+"we've": "we have",
+"weren't": "were not",
+"what'll": "what will",
+"what'll've": "what will have",
+"what're": "what are",
+"what's": "what is",
+"what've": "what have",
+"when's": "when is",
+"when've": "when have",
+"where'd": "where did",
+"where's": "where is",
+"where've": "where have",
+"who'll": "who will",
+"who'll've": "who will have",
+"who's": "who is",
+"who've": "who have",
+"why's": "why is",
+"why've": "why have",
+"will've": "will have",
+"won't": "will not",
+"won't've": "will not have",
+"would've": "would have",
+"wouldn't": "would not",
+"wouldn't've": "would not have",
+"y'all": "you all",
+"y'all'd": "you all would",
+"y'all'd've": "you all would have",
+"y'all're": "you all are",
+"y'all've": "you all have",
+"you'd": "you would",
+"you'd've": "you would have",
+"you'll": "you will",
+"you'll've": "you will have",
+"you're": "you are",
+"you've": "you have"
+}
+
+#Dictionary for short words in tweets
+short_word_dict = {
+"121": "one to one",
+"a/s/l": "age, sex, location",
+"adn": "any day now",
+"afaik": "as far as I know",
+"afk": "away from keyboard",
+"aight": "alright",
+"alol": "actually laughing out loud",
+"b4": "before",
+"b4n": "bye for now",
+"bak": "back at the keyboard",
+"bf": "boyfriend",
+"bff": "best friends forever",
+"bfn": "bye for now",
+"bg": "big grin",
+"bta": "but then again",
+"btw": "by the way",
+"cid": "crying in disgrace",
+"cnp": "continued in my next post",
+"cp": "chat post",
+"cu": "see you",
+"cul": "see you later",
+"cul8r": "see you later",
+"cya": "bye",
+"cyo": "see you online",
+"dbau": "doing business as usual",
+"fud": "fear, uncertainty, and doubt",
+"fwiw": "for what it's worth",
+"fyi": "for your information",
+"g": "grin",
+"g2g": "got to go",
+"ga": "go ahead",
+"gal": "get a life",
+"gf": "girlfriend",
+"gfn": "gone for now",
+"gmbo": "giggling my butt off",
+"gmta": "great minds think alike",
+"h8": "hate",
+"hagn": "have a good night",
+"hdop": "help delete online predators",
+"hhis": "hanging head in shame",
+"iac": "in any case",
+"ianal": "I am not a lawyer",
+"ic": "I see",
+"idk": "I don't know",
+"imao": "in my arrogant opinion",
+"imnsho": "in my not so humble opinion",
+"imo": "in my opinion",
+"iow": "in other words",
+"ipn": "I’m posting naked",
+"irl": "in real life",
+"jk": "just kidding",
+"l8r": "later",
+"ld": "later, dude",
+"ldr": "long distance relationship",
+"llta": "lots and lots of thunderous applause",
+"lmao": "laugh my ass off",
+"lmirl": "let's meet in real life",
+"lol": "laugh out loud",
+"ltr": "longterm relationship",
+"lulab": "love you like a brother",
+"lulas": "love you like a sister",
+"luv": "love",
+"m/f": "male or female",
+"m8": "mate",
+"milf": "mother I would like to fuck",
+"oll": "online love",
+"omg": "oh my god",
+"otoh": "on the other hand",
+"pir": "parent in room",
+"ppl": "people",
+"r": "are",
+"rofl": "roll on the floor laughing",
+"rpg": "role playing games",
+"ru": "are you",
+"shid": "slaps head in disgust",
+"somy": "sick of me yet",
+"sot": "short of time",
+"thanx": "thanks",
+"thx": "thanks",
+"ttyl": "talk to you later",
+"u": "you",
+"ur": "you are",
+"uw": "you’re welcome",
+"wb": "welcome back",
+"wfm": "works for me",
+"wibni": "wouldn't it be nice if",
+"wtf": "what the fuck",
+"wtg": "way to go",
+"wtgp": "want to go private",
+"ym": "young man",
+"gr8": "great"
+}
+#Dictionary to change emojis to words
+emoticon_dict = {
+":)": "happy",
+":‑)": "happy",
+":-]": "happy",
+":-3": "happy",
+":->": "happy",
+"8-)": "happy",
+":-}": "happy",
+":o)": "happy",
+":c)": "happy",
+":^)": "happy",
+"=]": "happy",
+"=)": "happy",
+"<3": "happy",
+":-(": "sad",
+":(": "sad",
+":c": "sad",
+":<": "sad",
+":[": "sad",
+">:[": "sad",
+":{": "sad",
+">:(": "sad",
+":-c": "sad",
+":-< ": "sad",
+":-[": "sad",
+":-||": "sad"
+}
+#Function to change apostrophy to actual words 
+def lookup_dict(text, dictionary):
+    for word in text.split():
+        if word.lower() in dictionary:
+            if word.lower() in text.split():
+                text = text.replace(word, dictionary[word.lower()])
+    return text
 
 #DATA ClEANING
 def TweetCleaner(tweet):
@@ -72,7 +336,15 @@ def TweetCleaner(tweet):
     #punctuation, numbers and any extra white space from tweets after converting everything to lowercase letters.
     
     # Convert everything to lowercase
-    tweet = tweet.lower() 
+    tweet = tweet.lower()
+    #apostrophe
+    tweet = lookup_dict(tweet,apostrophe_dict)
+    #short_word
+    tweet = lookup_dict(tweet,short_word_dict)
+    #emotion
+    tweet = lookup_dict(tweet,emoticon_dict)
+    #Remove stop words
+    tweet = remove_stopwords(tweet)
     # Remove mentions   
     tweet = re.sub('@[\w]*','',tweet)  
     # Remove url's
@@ -109,14 +381,13 @@ def TweetCleaner(tweet):
                 u"\ufe0f"
     "]+", flags=re.UNICODE)
     tweet = emoji_pattern.sub(r'', tweet)
-    #Remove stop words
-    remove_stopwords = [w for w in tweet.split() if w not in stop]
-    tweet = ' '.join(remove_stopwords)
     
+    tweet = " ".join(lemmatizer.lemmatize(word) for word in tweet.split())
     return tweet
 
 # Clean the tweets in the message column
 raw['clean_message'] = raw['message'].apply(TweetCleaner)
+raw['clean_message'] = raw['clean_message'].apply(lambda x: ' '.join([w for w in x.split() if len(w)>1]))
 
 # function to plot the target _ distribution
 fig1, axes = plt.subplots(ncols=2, figsize=(17, 4), dpi=100)
@@ -171,7 +442,7 @@ Pro_tweets = raw[raw['sentiment']==1]['clean_message'] #select only pro-tweets
 neutral_tweets = raw[raw['sentiment']==0]['clean_message'] #select only neutral-tweets
 anti_tweets = raw[raw['sentiment']==-1]['clean_message'] #select only anti-tweets
 alll = raw['clean_message'] #select all tweets
-   
+    
 fig3, ((ax1, ax2,ax3,ax4,ax5)) = plt.subplots(5, 1, figsize=[40, 30]) 
 #Code for Neutral Tweets
 wordcloud1 = WordCloud( background_color='white',width=1400,height=400).generate(" ".join(neutral_tweets)) 
@@ -202,7 +473,7 @@ ax5.set_title('All Tweets',fontsize=30)
 # The main function where we will build the actual app
 def main():
     
-	"""TEAM AM5 Tweet Classifier App Streamlit """
+	"""Tweet Classifier App Streamlit"""
 	# Creates a main title and subheader on your page -
 	# these are static across all pages
 	st.title("Tweet Classifer")
@@ -255,7 +526,7 @@ def main():
 	if selection == "Information":
 		st.info("General Information")
 		# You can read a markdown file from supporting resources folder
-		st.markdown("Some information here")
+		st.markdown("View the raw data and the processed data")
 
 		st.subheader("Raw Twitter data and label")
 		if st.checkbox('Show raw data'): # data is hidden if box is unchecked
