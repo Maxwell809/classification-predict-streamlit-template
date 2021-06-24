@@ -33,7 +33,6 @@ import re # for regular expressions
 import string
 special = string.punctuation 
 import nltk # for text manipulation
-nltk.download('wordnet')
 
 import warnings 
 warnings.filterwarnings("ignore")
@@ -47,8 +46,7 @@ import matplotlib.style as style
 from wordcloud import WordCloud
 from sklearn import datasets
 import matplotlib.pyplot as plt
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer 
+from nltk.tokenize import word_tokenize 
 from gensim.parsing.preprocessing import remove_stopwords
 
 # Standard libraries
@@ -64,7 +62,6 @@ news_vectorizer = open("resources/tfidfvect.pkl","rb")
 count_vect = open("resources/CountVectorizer.pkl","rb")
 tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl file
 Count_v = joblib.load(count_vect)
-lemmatizer= WordNetLemmatizer()
 # Load your raw data
 raw = pd.read_csv("resources/train.csv")
 
@@ -373,8 +370,6 @@ def TweetCleaner(tweet):
                 u"\ufe0f"
     "]+", flags=re.UNICODE)
     tweet = emoji_pattern.sub(r'', tweet)
-    
-    tweet = " ".join(lemmatizer.lemmatize(word) for word in tweet.split())
     return tweet
 
 # Clean the tweets in the message column
