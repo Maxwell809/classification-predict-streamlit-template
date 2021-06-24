@@ -473,7 +473,9 @@ ax5.set_title('All Tweets',fontsize=30)
 # The main function where we will build the actual app
 def main():
     
-	"""Tweet Classifier App Streamlit"""
+	""" Tweet Classifier App Streamlit """
+    
+    
 	# Creates a main title and subheader on your page -
 	# these are static across all pages
 	st.title("Tweet Classifer")
@@ -487,18 +489,18 @@ def main():
 	if selection == "Introduction":
 		st.info("Introduction")
 		st.markdown("Given the recent explosion of Big Data, there is a growing demand for analyzing non traditional data sources. Social Media data is a huge source of this data in the form of chats, messages, news feeds and all of it is in an unstructured form. Text analytics is a process that helps analyze this unstructured data and look for patterns or infer popular sentiment which can help organizations in their decision making.Twitter data is a powerful source of information on a wide list of topics. This data can be analyzed to find trends related to specific topics, measure popular sentiment, obtain feedback on past decisions and also help make future decisions. Climate change has received extensive attention from public opinion in the last couple of years, after being considered for decades as an exclusive scientific debate")
-		st.markdown("""![ChessUrl](https://i.gifer.com/HnFI.gif "chess")""")
+		st.markdown("""![ChessUrl](https://i.gifer.com/HnFI.gif "Introduction")""")
 
 	# Building out the "Problem Statement" page
 	if selection == "Problem Statement":
 		st.info("Problem Statement")
 		st.markdown("Our task is to create a machine learning model that is able to clarify whether or not a person believes in climate change, based on their novel tweet data. To increase Thrive Market’s advertising efficiency by using machine learning to create effective marketing tools that can identify whether or not a person believes in climate change and could possibly be converted to a new customer based on their tweets.")
-		st.markdown("""![ChessUrl](https://i.gifer.com/Q8k0.gif "chess")""")
+		st.markdown("""![ChessUrl](https://i.gifer.com/Q8k0.gif "Problem Statement")""")
         
 	# Building out the "EDA" page
 	if selection == "EDA":
 		st.info("Exploratory Data Analysis")
-		st.markdown("![6a0120a5e84a91970c0223c8514578200c-500wi](https://acuate.typepad.com/.a/6a0120a5e84a91970c0223c8514578200c-500wi)")
+		st.markdown("""![ChessUrl](https://images.theconversation.com/files/213371/original/file-20180405-189801-1wbjtyg.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=496&fit=clip "EDA")""")
 		st.subheader("Percentage of Sentimentals (2,1,0 & -1) using Pie chart and Bar graph")
 		st.pyplot(fig1)
 		st.markdown("Target distribution percentages info:\n\n -54 percentage of our tweets shows that they believe in man-made climate change(Pro = 1) \n\n -23 percentage of our tweets shows the news about man-made climate change (News = 2) \n\n -15 percentage of our tweets shows that they neither believe or do not believe in man-made climate change (Neutral = 0) \n\n-8 percentage of our tweets show that they do not believe in man-made climate change(Anti = -1) \n\n -Imbalanced: The sentiment are not balanced. Which means when we predict our sentiment it will be leaning towards the majority sentiment")
