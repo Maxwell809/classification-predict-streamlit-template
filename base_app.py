@@ -33,19 +33,11 @@ import re # for regular expressions
 import string
 special = string.punctuation 
 import nltk # for text manipulation
-from nltk.stem.porter import *
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.linear_model import LogisticRegression
-from scipy import stats 
-from sklearn import metrics 
-from sklearn.metrics import mean_squared_error,mean_absolute_error, make_scorer,classification_report,confusion_matrix,accuracy_score,roc_auc_score,roc_curve
 
 import warnings 
 warnings.filterwarnings("ignore")
 
 #Importing other libraries
-import nltk # for text manipulation
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from collections import defaultdict
 from collections import  Counter
 
@@ -56,7 +48,6 @@ from sklearn import datasets
 import matplotlib.pyplot as plt
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer 
-from nltk.corpus import stopwords, wordnet 
 from gensim.parsing.preprocessing import remove_stopwords
 
 # Standard libraries
